@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
   @PrimaryColumn()
-  userId: string;
+  id: string;
 
   @Column({ unique: true })
   username: string;
@@ -13,4 +14,18 @@ export class User {
 
   @Column()
   password: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+  }
+
+  async updateInfo(username?: string, email?: string, password?: string) {
+    if (username) this.username = username;
+    if (email) this.email = email;
+    if (password) this.password = password;
+  }
 }

@@ -42,7 +42,7 @@ export class AuthService {
 
     // Create new user
     const user = this.usersRepository.create({
-      userId,
+      id: userId,
       username,
       email,
       password: hashedPassword,
@@ -59,10 +59,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
-      user_id: user.userId
+      user_id: user.id
     };
   }
 }
